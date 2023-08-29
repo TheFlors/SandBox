@@ -36,9 +36,10 @@ public class CameraController : MonoBehaviour
         if (Input.GetKey("d") /*|| Input.mousePosition.x >= Screen.width - panBorderThickness*/)
             InputDir.x = +1f;
 
-        //New  Variant For Movement Towards Camera Direction
+        //New  Variant For Movement Towards Camera Direction 
         Vector3 MoveDir = (transform.forward - new Vector3(0, transform.forward.y, 0)) * InputDir.z
             + transform.right * InputDir.x;
+
 
         //Zoom Codes With Scrool
         float scrool = Input.GetAxis("Mouse ScrollWheel");
@@ -48,8 +49,12 @@ public class CameraController : MonoBehaviour
         if (Input.GetKey("e")) MoveDir.y += scroolSpeed * Time.deltaTime * 5;
         if (Input.GetKey("q")) MoveDir.y -= scroolSpeed * Time.deltaTime * 5;
 
-        //Increase to Position With Speed
-        Pos += MoveDir * panSpeed * Time.deltaTime;
+        //Shift to Fast
+        if(Input.GetKey("left shift")) 
+            Pos += MoveDir * panSpeed * Time.deltaTime * 5;//Increase to Position With Fast Speed
+        else
+            Pos += MoveDir * panSpeed * Time.deltaTime;//Increase to Position With Speed
+
 
         //Clamp for Map Border
         Pos.x = Mathf.Clamp(Pos.x, -panLimit.x, panLimit.x);
