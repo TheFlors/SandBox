@@ -1,18 +1,28 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    //Cinemachine Variables
+    [SerializeField] public CinemachineVirtualCamera cinemachineVirtualCamera;
+
     //Movement Variebles
-    public float panSpeed = 20f; //Screen Speed
+    public float panSpeed = 30f; //Screen Speed
     public float panBorderThickness = 10f; //Screen Border Thickness
     public Vector2 panLimit; //Screen Limit For X And Y 
 
+    //Height Variables
+    public float maxY = 400f;
+    public float minY = 10f;
+
     //Zoom Variables
-    public float scroolSpeed = 50f;
-    public float maxY;
-    public float minY;
+    private float targetFieldView = 50f;
+    public float zoomSpeed = 10f;
+    public float MaxFieldView = 50f;
+    public float MinFieldView = 5f;
 
     //Rotate Variables
     public float RotateSpeed = 200f;
@@ -37,17 +47,24 @@ public class CameraController : MonoBehaviour
             InputDir.x = +1f;
 
         //New  Variant For Movement Towards Camera Direction 
-        Vector3 MoveDir = (transform.forward - new Vector3(0, transform.forward.y, 0)) * InputDir.z
+        Vector3 MoveDir = (transform.forward - new Vector3(0, transform.forward.y, 0)) * InputDir.z 
             + transform.right * InputDir.x;
 
 
-        //Zoom Codes With Scrool
-        float scrool = Input.GetAxis("Mouse ScrollWheel");
-        MoveDir.y -= scroolSpeed * scrool;
 
-        //Zoom Code With "E" And "Q" Keys
-        if (Input.GetKey("e")) MoveDir.y += scroolSpeed * Time.deltaTime * 5;
-        if (Input.GetKey("q")) MoveDir.y -= scroolSpeed * Time.deltaTime * 5;
+        //Zoom Codes With Scrool
+        if(Input.mouseScrollDelta.y > 0) targetFieldView -= 5f;
+        if (Input.mouseScrollDelta.y < 0) targetFieldView += 5f;
+
+        targetFieldView = Mathf.Clamp(targetFieldView, MinFieldView , MaxFieldView);
+        cinemachineVirtualCamera.m_Lens.FieldOfView = //Smooth Camera Move
+            Mathf.Lerp(cinemachineVirtualCamera.m_Lens.FieldOfView, targetFieldView , Time.deltaTime * zoomSpeed);
+
+
+
+        //Height Code With "E" And "Q" Keys
+        if (Input.GetKey("e")) MoveDir.y += panSpeed * Time.deltaTime * 5;
+        if (Input.GetKey("q")) MoveDir.y -= panSpeed * Time.deltaTime * 5;
 
         //Shift to Fast
         if(Input.GetKey("left shift")) 
