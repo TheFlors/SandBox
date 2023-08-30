@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] public CinemachineVirtualCamera cinemachineVirtualCamera;
 
     //Movement Variebles
-    public float panSpeed = 30f; //Screen Speed
+    public float panSpeed = 50f; //Screen Speed
     public float panBorderThickness = 10f; //Screen Border Thickness
     public Vector2 panLimit; //Screen Limit For X And Y 
 
@@ -25,7 +25,7 @@ public class CameraController : MonoBehaviour
     public float MinFieldView = 5f;
 
     //Rotate Variables
-    public float RotateSpeed = 200f;
+    public float RotateSpeed = 150f;
     bool ControlRotation;
 
     void Update()
@@ -50,17 +50,15 @@ public class CameraController : MonoBehaviour
         Vector3 MoveDir = (transform.forward - new Vector3(0, transform.forward.y, 0)) * InputDir.z 
             + transform.right * InputDir.x;
 
-
-
         //Zoom Codes With Scrool
         if(Input.mouseScrollDelta.y > 0) targetFieldView -= 5f;
         if (Input.mouseScrollDelta.y < 0) targetFieldView += 5f;
 
-        targetFieldView = Mathf.Clamp(targetFieldView, MinFieldView , MaxFieldView);
+        targetFieldView = Mathf.Clamp(targetFieldView, MinFieldView , MaxFieldView);//Clamp To Zoom
         cinemachineVirtualCamera.m_Lens.FieldOfView = //Smooth Camera Move
             Mathf.Lerp(cinemachineVirtualCamera.m_Lens.FieldOfView, targetFieldView , Time.deltaTime * zoomSpeed);
 
-
+        panSpeed = targetFieldView; //Slow Down When Player Zoomed
 
         //Height Code With "E" And "Q" Keys
         if (Input.GetKey("e")) MoveDir.y += panSpeed * Time.deltaTime * 5;
