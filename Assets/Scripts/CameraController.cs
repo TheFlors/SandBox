@@ -15,8 +15,8 @@ public class CameraController : MonoBehaviour
     //Movement Variebles
     private CharacterController characterController;
     public float MoveSpeed = 1f; //PlayerMovementSpeed
+    public float LookSpeed = 2f; //PlayerLookSpeed
 
-    public float panBorderThickness = 10f; //Screen Border Thickness
     public Vector2 panLimit; //Screen Limit For X And Y 
 
     //Height Variables
@@ -26,11 +26,9 @@ public class CameraController : MonoBehaviour
     //Zoom Variables
     private float targetFieldView = 50f;
     public float zoomSpeed = 10f;
-    public float MaxFieldView = 50f;
-    public float MinFieldView = 5f;
+    private float MaxFieldView = 50f;
+    private float MinFieldView = 5f;
 
-    //Rotate Variables
-    public float RotateSpeed = 150f;
 
     private void Start()
     {
@@ -75,6 +73,7 @@ public class CameraController : MonoBehaviour
             Mathf.Lerp(cinemachineVirtualCamera.m_Lens.FieldOfView, targetFieldView , Time.deltaTime * zoomSpeed);
 
         MoveSpeed = targetFieldView / 50f; //Slow Down When Player Zoomed
+        LookSpeed = targetFieldView / 50f * 2f; //Slow Down When Player Zoomed
 
         //Shift to Fast
         if (Input.GetKey("left shift"))
@@ -92,7 +91,11 @@ public class CameraController : MonoBehaviour
         //Change to New Position
         characterController.Move(MoveDir * MoveSpeed);
 
-        //Change to EulerAngles
-        transform.eulerAngles = CameraAngles;
+
+        //MouseLook Codes
+        float MouseX = Input.GetAxis("Mouse X");
+        float MouseY = Input.GetAxis("Mouse Y");
+        transform.eulerAngles += new Vector3(-MouseY, MouseX, 0) * LookSpeed;
+
     }
 }
