@@ -2526,14 +2526,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cinemachineVirtualCamera: {fileID: 813418918}
   MainCamera: {fileID: 1261617625}
-  MoveSpeed: 1
+  MoveSpeed: 0.5
   LookSpeed: 2
   panLimit: {x: 1000, y: 1000}
   maxY: 150
   minY: 20
   zoomSpeed: 10
-  MaxFieldView: 50
-  MinFieldView: 5
 --- !u!54 &857359429
 Rigidbody:
   m_ObjectHideFlags: 0

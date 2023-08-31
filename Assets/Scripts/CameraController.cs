@@ -14,7 +14,10 @@ public class CameraController : MonoBehaviour
 
     //Movement Variebles
     private CharacterController characterController;
-    public float MoveSpeed = 1f; //PlayerMovementSpeed
+    private float GivenMoveSpeed;//Given Player Value
+    public float MoveSpeed = 0.5f; //PlayerMovementSpeed
+
+    private float GivenLookSpeed;//Given Player Value
     public float LookSpeed = 2f; //PlayerLookSpeed
 
     public Vector2 panLimit; //Screen Limit For X And Y 
@@ -32,6 +35,12 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
+        //Move Speed Value
+        GivenMoveSpeed = MoveSpeed;
+
+        //Look Speed Vaue
+        GivenLookSpeed = LookSpeed;
+
         //CharacterController
         characterController = GetComponent<CharacterController>();
     }
@@ -72,16 +81,24 @@ public class CameraController : MonoBehaviour
         cinemachineVirtualCamera.m_Lens.FieldOfView = //Smooth Camera Move
             Mathf.Lerp(cinemachineVirtualCamera.m_Lens.FieldOfView, targetFieldView , Time.deltaTime * zoomSpeed);
 
-        MoveSpeed = targetFieldView / 50f; //Slow Down When Player Zoomed
-        LookSpeed = targetFieldView / 50f * 2f; //Slow Down When Player Zoomed
+        MoveSpeed = targetFieldView / 50f * GivenMoveSpeed; //Slow Down When Player Zoomed
+        LookSpeed = targetFieldView / 50f * GivenLookSpeed; //Slow Down When Player Zoomed
 
-        //Shift to Fast
+        //Press Shift to Slow
         if (Input.GetKey("left shift"))
             //Be Faster
-            MoveSpeed = Mathf.Lerp(MoveSpeed, MoveSpeed = targetFieldView / 50f * 2, 0.2f);
+            MoveSpeed = Mathf.Lerp(MoveSpeed, MoveSpeed = targetFieldView / 50f * 2 * GivenMoveSpeed, 0.2f);
         else
-            //Go Back to OldMoveSpeed 
-            MoveSpeed = Mathf.Lerp(MoveSpeed, MoveSpeed = targetFieldView / 50f, 0.2f);
+            //Go Back to Normal 
+            MoveSpeed = Mathf.Lerp(MoveSpeed, MoveSpeed = targetFieldView / 50f * GivenMoveSpeed, 0.2f);
+
+        //Press CTRL for Slow
+        if (Input.GetKey("left ctrl"))
+            //Be Faster
+            MoveSpeed = Mathf.Lerp(MoveSpeed, MoveSpeed = targetFieldView / 50f / 2 * GivenMoveSpeed, 0.2f);
+        else
+            //Go Back to Normal
+            MoveSpeed = Mathf.Lerp(MoveSpeed, MoveSpeed = targetFieldView / 50f * GivenMoveSpeed, 0.2f);
 
         //Clamp for Map Border
         Pos.x = Mathf.Clamp(Pos.x, -panLimit.x, panLimit.x);
@@ -90,7 +107,6 @@ public class CameraController : MonoBehaviour
 
         //Change to New Position
         characterController.Move(MoveDir * MoveSpeed);
-
 
         //MouseLook Codes
         float MouseX = Input.GetAxis("Mouse X");
